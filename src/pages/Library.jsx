@@ -90,12 +90,12 @@ const Library = () => {
 
   return(
     <div className="container my-5">
-      <div className="row">
-        <div className="col-10">
+      {isLoadingContractData ? (
+        <Loading />
+      ) : (
+      <div>
+
           <h3 className="text-headline mb-4">Available books</h3>
-        {isLoadingContractData ? (
-          <Loading />
-        ) : (
           <div className="row">
             { [...contractData.availableBooks.keys()].map((key) => {
               return (
@@ -111,31 +111,28 @@ const Library = () => {
               )
           })}
           </div>
-        )}
-        </div>
-        <div className="col-2">
+
+        <hr className="mt-3 mb-6"/>
+
           <h3 className="text-headline mb-4">My books</h3>
-          {isLoadingContractData ? (
-            <Loading />
-          ) : (
           <div className="row">
             { [...contractData.currentBooks.keys()].map((key) => {
               return (
-                <div key={ key } className='col-12'>
+                <div key={ key } className='col-3'>
                   <BookCard
                     bookId={key}
                     title={contractData.currentBooks.get(key)[0]}
                     author={contractData.currentBooks.get(key)[1]}
-                    copies={contractData.currentBooks.get(key)[2].toString()}
                     buttonHandler = {handleReturnBookButtonClick}
                     buttonLabel='Return this book'/>
                 </div>
               )
             })}
           </div>
-            )}
-        </div>
+
       </div>
+
+      )}
     </div>
 
   )

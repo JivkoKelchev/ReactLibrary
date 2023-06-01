@@ -7,7 +7,7 @@ const BookCard = ({
                     bookId = 'bookId',
                     title = '',
                     author = '',
-                    copies = 0,
+                    copies = '',
                     buttonLabel = '',
                     buttonHandler
                   }) => {
@@ -22,7 +22,7 @@ const BookCard = ({
           <p>{truncate(bookId, 6).toUpperCase()}</p>
           <p>Title: {title}</p>
           <p>Author: {author}</p>
-          <p>Copies: {copies}</p>
+          {copies !== '' ? <p>Copies: {copies}</p> : null }
           <Button
             onClick={buttonHandler}
             // loading={isLoadingSubmit}
