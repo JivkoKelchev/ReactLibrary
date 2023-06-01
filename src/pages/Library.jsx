@@ -18,17 +18,27 @@ const Library = () => {
 
   const getContractData = useCallback(async () => {
     setIsLoadingContractData(true);
+
     const availableBooksId = await contract.showAvailableBooks();
-    let availableBooks = [];
+    let availableBooks = new Map();
     await Promise.all(availableBooksId.map(async (bookId, i) => {
       let book = await contract.books(bookId);
-      availableBooks.push(book);
+      availableBooks.set(bookId, book);
     }));
 
-    setContractData({ availableBooks });
-    console.log(contractData.availableBooks)
+    let currentBooks = new Map();
+    if(signer) {
+      const signerAddress = await signer.getAddress();
+      const currentBooksId = await contract.showUserCurrentBooks(signerAddress);
+      await Promise.all(currentBooksId.map(async (bookId, i) => {
+        let book = await contract.books(bookId);
+        currentBooks.set(bookId, book);
+      }));
+   }
+
+    setContractData({ availableBooks, currentBooks });
     setIsLoadingContractData(false);
-  }, [contract]);
+  }, [contract, signer]);
 
   // Use effects
   useEffect(() => {
@@ -42,24 +52,88 @@ const Library = () => {
     contract && getContractData();
   }, [contract, getContractData]);
 
+  const handleBorrowBookButtonClick = async (e) => {
+    setIsLoadingContractData(true);
+    const bookId = e.target.dataset.bookId;
+    try {
+      const tx = await contract.borrowBook(bookId);
+      await tx.wait();
+
+      // const txResult = await tx.wait();
+      // const { status, transactionHash } = txResult;
+
+      await getContractData();
+    } catch (e) {
+      //setFormSubmitError(e.reason);
+    } finally {
+      setIsLoadingContractData(false);
+    }
+  };
+
+  const handleReturnBookButtonClick = async (e) => {
+    setIsLoadingContractData(true);
+    const bookId = e.target.dataset.bookId;
+    try {
+      const tx = await contract.returnBook(bookId);
+      await tx.wait();
+
+      // const txResult = await tx.wait();
+      // const { status, transactionHash } = txResult;
+
+      await getContractData();
+    } catch (e) {
+      //setFormSubmitError(e.reason);
+    } finally {
+      setIsLoadingContractData(false);
+    }
+  };
+
   return(
     <div className="container my-5">
       <div className="row">
-        <div className="col-8">
+        <div className="col-10">
           <h3 className="text-headline mb-4">Available books</h3>
         {isLoadingContractData ? (
           <Loading />
         ) : (
-          <div>
-            { contractData.availableBooks.map((book, i) => {
-              return <BookCard key={ i } title={book[0]} author={book[1]} copies={book[2].toString()}/>
+          <div className="row">
+            { [...contractData.availableBooks.keys()].map((key) => {
+              return (
+                <div key={ 'available' + key } className='col-3'>
+                <BookCard
+                  bookId={key}
+                  title={contractData.availableBooks.get(key)[0]}
+                  author={contractData.availableBooks.get(key)[1]}
+                  copies={contractData.availableBooks.get(key)[2].toString()}
+                  buttonHandler = {handleBorrowBookButtonClick}
+                  buttonLabel='Borrow this book'/>
+                </div>
+              )
           })}
           </div>
         )}
         </div>
-        <div className="col-4">
+        <div className="col-2">
           <h3 className="text-headline mb-4">My books</h3>
-          <BookCard title="my book" author="teste" copies="6"/>
+          {isLoadingContractData ? (
+            <Loading />
+          ) : (
+          <div className="row">
+            { [...contractData.currentBooks.keys()].map((key) => {
+              return (
+                <div key={ key } className='col-12'>
+                  <BookCard
+                    bookId={key}
+                    title={contractData.currentBooks.get(key)[0]}
+                    author={contractData.currentBooks.get(key)[1]}
+                    copies={contractData.currentBooks.get(key)[2].toString()}
+                    buttonHandler = {handleReturnBookButtonClick}
+                    buttonLabel='Return this book'/>
+                </div>
+              )
+            })}
+          </div>
+            )}
         </div>
       </div>
     </div>
