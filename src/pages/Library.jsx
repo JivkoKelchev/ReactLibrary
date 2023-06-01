@@ -12,6 +12,7 @@ const Library = () => {
   const [contract, setContract] = useState();
   const [contractData, setContractData] = useState({});
   const [isLoadingContractData, setIsLoadingContractData] = useState(true);
+  const [error, setError] = useState({})
 
   const { data: signer } = useSigner();
   const contractAddress = '0xf071786c9Ab0585d64b0E53d7d027B3E30310324';
@@ -64,7 +65,9 @@ const Library = () => {
 
       await getContractData();
     } catch (e) {
-      //setFormSubmitError(e.reason);
+      let hasError = true;
+      let error = e.reason;
+      setError( {hasError, error});
     } finally {
       setIsLoadingContractData(false);
     }
@@ -88,8 +91,20 @@ const Library = () => {
     }
   };
 
+  const handleErrorClick = (e) => {
+
+    let hasError = false;
+    let error = '';
+    setError( {hasError, error});
+  }
+
   return(
     <div className="container my-5">
+      {error.hasError ?
+        <div className="error-container" onClick={handleErrorClick}>
+          <div className="error-msg" onBlur={handleErrorClick}> {error.error} </div>
+        </div>
+        : null}
       {isLoadingContractData ? (
         <Loading />
       ) : (
@@ -129,12 +144,9 @@ const Library = () => {
               )
             })}
           </div>
-
       </div>
-
       )}
     </div>
-
   )
 }
 
