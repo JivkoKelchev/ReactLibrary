@@ -213,7 +213,7 @@ const Library = () => {
                   copies={contractData.availableBooks.get(key)[2].toString()}
                   buttonHandler = {handleBorrowBookButtonClick}
                   // Show buttons only when user is connected!!!
-                  readOnly = {!signer ? true : false}
+                  readOnly = {!isConnected ? true : false}
                   buttonLabel='Borrow this book'/>
                 </div>
               )
@@ -223,7 +223,7 @@ const Library = () => {
         <br/>
 
         {/*Dont show this section, if user is not connected*/}
-        {signer ? (
+        {isConnected ? (
           <div>
             <h3 className="text-headline mb-4">My books</h3>
             <div className="shelve">
