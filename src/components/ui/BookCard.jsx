@@ -9,7 +9,8 @@ const BookCard = ({
                     author = '',
                     copies = '',
                     buttonLabel = '',
-                    buttonHandler
+                    buttonHandler,
+  readOnly = false
                   }) => {
 
   return (
@@ -23,6 +24,7 @@ const BookCard = ({
           <p>Title: {title}</p>
           <p>Author: {author}</p>
           {copies !== '' ? <p>Copies: {copies}</p> : null }
+          {!readOnly ?
           <Button
             onClick={buttonHandler}
             // loading={isLoadingSubmit}
@@ -31,6 +33,7 @@ const BookCard = ({
           >
             { buttonLabel }
           </Button>
+            : null }
         </div>
       </div>
     </div>

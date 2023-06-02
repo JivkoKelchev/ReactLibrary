@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {ethers} from "ethers";
-import {useSigner} from "wagmi";
+import {useProvider, useAccount, useSigner} from "wagmi";
 import libraryABI from '../abi/Library.json';
 import BookCard from "../components/ui/BookCard";
 import Loading from "../components/ui/Loading";
@@ -14,9 +14,12 @@ const Library = () => {
   const [contract, setContract] = useState();
   const [contractData, setContractData] = useState({});
   const [isLoadingContractData, setIsLoadingContractData] = useState(true);
-  const [error, setError] = useState({})
+  const [error, setError] = useState({});
 
+  //Use public provider to get available books before user is connected
+  const publicProvider = useProvider();
   const { data: signer } = useSigner();
+  const { connector: activeConnector, isConnected } = useAccount();
   const contractAddress = '0x826B0a9E0Cb6af896812a4d1C4361E4106c8Ee2e';
 
   const initialFormData = {
@@ -28,6 +31,28 @@ const Library = () => {
   // Form states
   const [addBookFromData, setAddBookFormData] = useState(initialFormData);
   const [isFormVisible, setIsFormVisible] = useState(false);
+
+  const getReadOnlyData = useCallback(async () => {
+    console.log(isConnected)
+    let readOnlyContract = new ethers.Contract(contractAddress, libraryABI, publicProvider);
+    let availableBooksId = await readOnlyContract.showAvailableBooks();
+
+    let availableBooks = new Map();
+    await Promise.all(availableBooksId.map(async (bookId, i) => {
+      let book = await readOnlyContract.books(bookId);
+      availableBooks.set(bookId, book);
+    }));
+    let currentBooks = new Map();
+    let isOwner = false;
+    setContractData({ availableBooks, currentBooks,  isOwner})
+    setIsLoadingContractData(false);
+  }, [publicProvider]);
+
+  useEffect( () => {
+    if(!isConnected) {
+      getReadOnlyData();
+    }
+  }, [isConnected, publicProvider])
 
   const getContractData = useCallback(async () => {
     setIsLoadingContractData(true);
@@ -187,6 +212,8 @@ const Library = () => {
                   author={contractData.availableBooks.get(key)[1]}
                   copies={contractData.availableBooks.get(key)[2].toString()}
                   buttonHandler = {handleBorrowBookButtonClick}
+                  // Show buttons only when user is connected!!!
+                  readOnly = {!signer ? true : false}
                   buttonLabel='Borrow this book'/>
                 </div>
               )
@@ -195,21 +222,26 @@ const Library = () => {
 
         <br/>
 
-          <h3 className="text-headline mb-4">My books</h3>
-          <div className="shelve">
-            { [...contractData.currentBooks.keys()].map((key) => {
-              return (
-                <div key={ key } className='book'>
-                  <BookCard
-                    bookId={key}
-                    title={contractData.currentBooks.get(key)[0]}
-                    author={contractData.currentBooks.get(key)[1]}
-                    buttonHandler = {handleReturnBookButtonClick}
-                    buttonLabel='Return this book'/>
-                </div>
-              )
-            })}
+        {/*Dont show this section, if user is not connected*/}
+        {signer ? (
+          <div>
+            <h3 className="text-headline mb-4">My books</h3>
+            <div className="shelve">
+              { [...contractData.currentBooks.keys()].map((key) => {
+                return (
+                  <div key={ key } className='book'>
+                    <BookCard
+                      bookId={key}
+                      title={contractData.currentBooks.get(key)[0]}
+                      author={contractData.currentBooks.get(key)[1]}
+                      buttonHandler = {handleReturnBookButtonClick}
+                      buttonLabel='Return this book'/>
+                  </div>
+                )
+              })}
+            </div>
           </div>
+          ) : null }
       </div>
       )}
     </div>
