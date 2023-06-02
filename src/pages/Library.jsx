@@ -121,6 +121,9 @@ const Library = () => {
     try {
       const { title, author, copies } = addBookFromData;
 
+      setIsLoadingContractData(true);
+      setIsFormVisible(false);
+
       const tx = await contract.addBook(title, author, copies);
       await tx.wait();
 
@@ -130,7 +133,7 @@ const Library = () => {
     } catch (e) {
       setError(e.reason);
     } finally {
-      setIsFormVisible(false);
+      setIsLoadingContractData(false);
     }
   };
 
@@ -164,8 +167,7 @@ const Library = () => {
           handleSubmitButtonClick={handleSubmitButtonClick}
         />: null}
       {isLoadingContractData ?
-        ( <Loading /> ) :
-        (
+        <Loading />  : (
       <div>
         <div id="add-book">
           <h3 className="text-headline mb-4">Available books</h3>
