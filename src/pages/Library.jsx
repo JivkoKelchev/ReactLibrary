@@ -5,7 +5,8 @@ import libraryABI from '../abi/Library.json';
 import BookCard from "../components/ui/BookCard";
 import Loading from "../components/ui/Loading";
 import Button from "../components/ui/Button";
-
+import NewBookForm from "../components/ui/NewBookForm"
+import ErrorMsg from "../components/ui/ErrorMsg";
 
 
 const Library = () => {
@@ -154,46 +155,18 @@ const Library = () => {
 
   return(
     <div className="container my-5">
-      {error.hasError ?
-        <div className="error-container" onClick={handleErrorClick}>
-          <div className="error-msg"> {error.error} </div>
-        </div>
-        : null}
+      {error.hasError ? <ErrorMsg handleErrorClick={handleErrorClick} error={error} />: null}
       {isFormVisible ?
-        <div className="form-background" onClick={handleFormCloseClick}>
-
-        <div className="form-container" onClick={handleFormClick}>
-          <h3 className="text-headline mb-4">Add new book</h3>
-          <label htmlFor="title">Title:</label>
-          <input
-            type="text"
-            className="form-control"
-            name="title"
-            onChange={handleFormInputChange}
-          />
-          <label htmlFor="author">Author:</label>
-          <input
-            type="text"
-            className="form-control"
-            name="author"
-            onChange={handleFormInputChange}
-          />
-          <label htmlFor="title">Copies:</label>
-          <input
-            type="number"
-            className="form-control"
-            name="copies"
-            onChange={handleFormInputChange}
-          />
-          <Button onClick={handleSubmitButtonClick}>Submit</Button>
-        </div>
-        </div>: null
-      }
-      {isLoadingContractData ? (
-        <Loading />
-      ) : (
+        <NewBookForm
+          handleFormClick={handleFormClick}
+          handleFormCloseClick={handleFormCloseClick}
+          handleFormInputChange={handleFormInputChange}
+          handleSubmitButtonClick={handleSubmitButtonClick}
+        />: null}
+      {isLoadingContractData ?
+        ( <Loading /> ) :
+        (
       <div>
-
         <div id="add-book">
           <h3 className="text-headline mb-4">Available books</h3>
           {contractData.isOwner ? <Button onClick={handleAddBookButtonClick} type='secondary'>Add book</Button> : null}
