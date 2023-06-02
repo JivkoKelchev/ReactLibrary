@@ -213,7 +213,7 @@ const Library = () => {
                   copies={contractData.availableBooks.get(key)[2].toString()}
                   buttonHandler = {handleBorrowBookButtonClick}
                   // Show buttons only when user is connected!!!
-                  readOnly = {!isConnected ? true : false}
+                  readOnly = {!isConnected}
                   buttonLabel='Borrow this book'/>
                 </div>
               )
