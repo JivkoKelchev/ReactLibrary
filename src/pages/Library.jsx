@@ -17,7 +17,7 @@ const Library = () => {
   const [error, setError] = useState({})
 
   const { data: signer } = useSigner();
-  const contractAddress = '0xf071786c9Ab0585d64b0E53d7d027B3E30310324';
+  const contractAddress = '0x826B0a9E0Cb6af896812a4d1C4361E4106c8Ee2e';
 
   const initialFormData = {
     title: '',
@@ -102,7 +102,9 @@ const Library = () => {
 
       await getContractData();
     } catch (e) {
-      //setFormSubmitError(e.reason);
+      let hasError = true;
+      let error = e.reason;
+      setError( {hasError, error});
     } finally {
       setIsLoadingContractData(false);
     }
@@ -131,7 +133,9 @@ const Library = () => {
 
       await getContractData();
     } catch (e) {
-      setError(e.reason);
+      let hasError = true;
+      let error = e.reason;
+      setError( {hasError, error});
     } finally {
       setIsLoadingContractData(false);
     }
