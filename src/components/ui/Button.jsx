@@ -8,12 +8,14 @@ const Button = ({
   onClick,
   loading = false,
   loadingText,
+  bookId = ''
 }) => {
   return (
     <button
       onClick={onClick}
       disabled={disabled || loading}
       className={`btn btn-${type} ${className}`}
+      data-book-id = {bookId}
     >
       {loading ? (
         <>

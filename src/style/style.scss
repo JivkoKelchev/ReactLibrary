@@ -9,3 +9,107 @@
   height: 32px;
   border-radius: 50%;
 }
+
+.book-icon {
+  background-size: 60px 60px;
+}
+
+p {
+  text-align: center;
+}
+
+.book button {
+  width: 100%;
+}
+
+#add-book{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+#loading {
+  margin-top: 40vh;
+}
+
+.error-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  z-index: 100;
+  background: rgba(0,0,0,0.5);
+
+}
+
+.error-msg {
+  background: white;
+  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 800px;
+  z-index: 101;
+  color: red;
+  padding: 20px;
+}
+
+.form-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  z-index: 100;
+  background: rgba(0,0,0,0.5);
+}
+
+.form-container {
+  background: white;
+  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 101;
+  padding: 20px;
+  min-width: 500px;
+  margin: auto;
+
+  input {
+    margin-bottom: 10px;
+  }
+}
+
+.shelve {
+  overflow: hidden;
+  overflow-x: visible;
+  white-space: nowrap;
+  background: #f8f9fa;
+  height: 280px;
+}
+
+.book {
+  display: inline-block;
+  width: 300px;
+  height: 100px;
+  margin: 0 10px 10px 10px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
